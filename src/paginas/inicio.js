@@ -4,6 +4,10 @@ import Registro from "../assets/registro.png";
 import Impresora from "../assets/impresora.png";
 import Caja from "../assets/caja.png";
 import Tablamotivos from "../componentes/tablamotivos";
+import Tablaestatus from "../componentes/tablaestatus";
+import Tablaregion from "../componentes/tablaregion";
+import Tablasucxregion from "../componentes/tablasucurxregion";
+import Tablausuxregion from "../componentes/tablausuxregion";
 
 const Inicio = () => {
   return (
@@ -21,7 +25,7 @@ const Inicio = () => {
       <br></br>
       <br></br>
       <br></br>
-      <Tablamotivos />
+      <Tablausuxregion/>
     </>
   );
 };
