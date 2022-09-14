@@ -1,4 +1,5 @@
 import React from "react";
+import 'antd/dist/antd.css';
 import "./Inicio.css";
 import Registro from "../assets/registro.png";
 import Impresora from "../assets/impresora.png";
@@ -25,7 +26,7 @@ const Inicio = () => {
       <br></br>
       <br></br>
       <br></br>
-      <Tablausuxregion/>
+      <Tablasucxregion/>
     </>
   );
 };

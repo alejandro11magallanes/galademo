@@ -1,92 +1,306 @@
-import React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Basura from "../assets/eliminar.png";
-import Lapiz from "../assets/lapiz.png";
-import "./Tablam.css";
+import { Button, Col, Input, Modal, Row, Table, Dropdown, Menu, Checkbox, message, Upload, Space } from "antd";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+
+import './Tablam.css'
+import ReactDragListView from "react-drag-listview";
+import { UnorderedListOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@mui/icons-material';
+import Highlighter from "react-highlight-words";
 import { TextField } from "@mui/material";
 
-function createData(clave, sucursal, borrar, actualizar) {
-  return { clave, sucursal , borrar, actualizar };
+function Tablasucxregion() {
+    const [data, setData] = useState([
+      {
+        id: 1, clave: "680", sucursal: "Hidalgo"
+      },
+      {
+        id: 2, clave: "685", sucursal: "Misiones"
+      },
+      {
+        id: 3, clave: "690", sucursal: "Soriana Revolucion"
+      },
+      {
+        id: 4, clave: "691", sucursal: "San Isidro"
+      },
+      {
+        id: 5, clave: "692", sucursal: "Gran Class"
+      },
+      {
+        id: 6, clave: "693", sucursal: "Gómez Palacio"
+      }
+    ])
+    const [deleteMany, setDeleteMany] = useState(true)
+    const [selectedRowKeys, setSelectedRowKeys] = useState([])
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const [editMenu, setEditMenu] = useState(null);
+    const searchInput = useRef(null)
+
+    const onDelete = (record) => {
+        console.log(record)
+        Modal.confirm({
+            title: 'Estás seguro que deseas eliminar este registro?',
+            okText: 'Confirmar',
+            okType: 'danger',
+            cancelText: 'Cancelar',
+            onOk: () => {
+
+            }
+        })
+    }
+
+    const deleteManySelected = () => {
+        Modal.confirm({
+            title: 'Estás seguro que deseas eliminar estos registros?',
+            okText: 'Confirmar',
+            okType: 'danger',
+            cancelText: 'Cancelar',
+            onOk: () => {
+
+            }
+        })
+    }
+
+    const onUpdateRegister = () => {
+        Modal.confirm({
+            title: 'Estás seguro que deseas actualizar este registro?',
+            okText: 'Confirmar',
+            okType: 'danger',
+            cancelText: 'Cancelar',
+            onOk: () => {
+
+            }
+        })
+    }
+
+    const getColumnSearchProps = (dataIndex, name) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div
+                style={{
+                    padding: 8,
+                }}
+            >
+                <Input
+                    ref={searchInput}
+                    placeholder={`Buscar ${name}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{
+                        marginBottom: 8,
+                        display: 'block',
+                    }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Buscar
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters) && handleSearch(selectedKeys, confirm, dataIndex)}
+                        size="small"
+                        type="danger"
+                        style={{
+                            width: 120,
+                        }}
+                    >
+                        Limpiar Filtros
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered) => (
+            <SearchOutlined
+                style={{
+                    color: filtered ? '#1890ff' : undefined,
+                }}
+            />
+        ),
+        onFilter: (value, record) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{
+                        backgroundColor: '#ffc069',
+                        padding: 0,
+                    }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
+                />
+            ) : (
+                text
+            ),
+    });
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const [columns, setColumns] = useState([
+        {
+            orden: 1,
+            title: <span className="dragHandler">CLAVE</span>,
+            dataIndex: 'clave',
+            key: 'clave',
+            sorter: (a, b) => a.clave.localeCompare(b.clave),
+            ...getColumnSearchProps('clave', 'clave'),
+            visible: true,
+        },
+        {
+            orden: 2,
+            title: <span className="dragHandler">REGION</span>,
+            dataIndex: 'sucursal',
+            key: 'sucursal',
+            sorter: (a, b) => a.sucursal.localeCompare(b.sucursal),
+            ...getColumnSearchProps('sucursal', 'sucursal'),
+            visible: true,
+        },
+        {
+            orden: 7,
+            title: <span className="dragHandler">Acción</span>,
+            key: 'ASU',
+            width: '10%',
+            render: (record) => {
+                return <>
+                    <div>
+                        <EditOutlined onClick={() => {
+                            setEditMenu({ ...record })
+                        }} style={{ color: "orange" }} />
+                        <DeleteOutlined onClick={() => {
+                            onDelete(record)
+                        }} style={{
+                            color: "red",
+                            marginLeft: 50
+                        }} />
+                    </div>
+                </>
+            },
+            visible: true,
+        }
+    ]);
+
+    const [columns1, setColumns1] = useState(columns.filter(column => column.visible))
+
+    const changeData = () => {
+        data.forEach(v => {
+            v.key = v.id
+        })
+    }
+
+    changeData()
+
+    const rowSelection = {
+        selectedRows: selectedRowKeys,
+        onChange: (selectedRowKeys, selectedRows) => {
+            setSelectedRowKeys(selectedRows)
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            if (selectedRows.length > 0) {
+                setDeleteMany(false)
+            }
+            else {
+                setDeleteMany(true)
+            }
+        }
+    };
+
+    const OnDragEnd = (fromIndex, toIndex) => {
+        const columnsCopy = columns1.slice();
+        const item = columnsCopy.splice(fromIndex - 1, 1)[0];
+        columnsCopy.splice(toIndex - 1, 0, item);
+        setColumns1(columnsCopy);
+    };
+
+    const onClick = ({ key }) => {
+        const newColumns = columns
+        for (var i = 0; i < newColumns.length; i++) {
+            console.log(newColumns[i].dataIndex)
+            if (newColumns[i].dataIndex === key) {
+                newColumns[i].visible = !newColumns[i].visible;
+            }
+        }
+        console.log(newColumns)
+        setColumns1(newColumns.filter(column => column.visible));
+    };
+
+    const menu = (
+        <Menu
+            onClick={onClick}
+            items={[
+                {
+                    key: 'clave',
+                    label: (<Checkbox defaultChecked={true}>CLAVE</Checkbox>)
+                },
+                {
+                    key: 'sucursal',
+                    label: (<Checkbox defaultChecked={true}>SUCURSAL</Checkbox>)
+                }
+            ]}
+        />
+    );
+
+    return (
+
+        <div >
+            <Row>
+              <Col offset={2}>
+                <TextField id="outlined-basic" label="Region" variant="outlined" /><br></br><br></br>
+              </Col>
+            </Row>
+            <Row>
+              <Col offset={2} lg={1} md={24} sm={24} xs={24}>
+                  <Dropdown overlay={menu} placement="bottomLeft">
+                      <Button><UnorderedListOutlined style={{ fontSize: '16px', color: '#08c' }} /></Button>
+                  </Dropdown>
+              </Col>
+              <Col lg={1} md={24} sm={24} xs={24} >
+                  <Button type="danger" disabled={deleteMany} onClick={() => {
+                      deleteManySelected()
+                  }}>
+                      <DeleteOutlined />
+                  </Button>
+              </Col>
+            </Row>
+            <br></br>
+            <Row>
+                <Col offset={2} lg={20}>
+                  <ReactDragListView.DragColumn onDragEnd={OnDragEnd} nodeSelector="th">
+                              <Table
+                                  showHeader={true}
+                                  rowSelection={{ type: 'checkbox', ...rowSelection, }}
+                                  columns={columns1}
+                                  dataSource={data}
+                                  bordered
+                                  size="middle"
+                              />
+                  </ReactDragListView.DragColumn>
+                </Col>
+            </Row>
+
+        </div>
+    )
+
 }
-
-const rows = [
-  createData(
-    "680",
-    "Hidalgo",
-    <img src={Basura} alt="borrar" width={30} height={30} />,
-    <img src={Lapiz} alt="lapiz" width={30} height={30} />
-  ),
-  createData(
-    "685",
-    "Misiones",
-    <img src={Basura} alt="borrar" width={30} height={30} />,
-    <img src={Lapiz} alt="lapiz" width={30} height={30} />
-  ),
-  createData(
-    "690",
-    "Soriana Revolución",
-    <img src={Basura} alt="borrar" width={30} height={30} />,
-    <img src={Lapiz} alt="lapiz" width={30} height={30} />
-  ),
-  createData(
-    "691",
-    "San Isidro",
-    <img src={Basura} alt="borrar" width={30} height={30} />,
-    <img src={Lapiz} alt="lapiz" width={30} height={30} />
-  ),
-  createData(
-    "692",
-    "Gran Class",
-    <img src={Basura} alt="borrar" width={30} height={30} />,
-    <img src={Lapiz} alt="lapiz" width={30} height={30} />
-  ),
-  createData(
-    "693",
-    "Gómez Palacio",
-    <img src={Basura} alt="borrar" width={30} height={30} />,
-    <img src={Lapiz} alt="lapiz" width={30} height={30} />
-  ),
-];
-
-const Tablasucxregion = () => {
-  return (
-    <div>
-      <TextField id="outlined-basic" label="Región" variant="outlined" /><br></br><br></br>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow className="table-title">
-              <TableCell align="left">Clave</TableCell>
-              <TableCell align="left">Sucursal</TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center"></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.clave}
-                </TableCell>
-                <TableCell align="left">{row.sucursal}</TableCell>
-                <TableCell align="left">{row.borrar}</TableCell>
-                <TableCell align="left">{row.actualizar}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-  );
-};
-
 export default Tablasucxregion;

@@ -1,3 +1,23 @@
 .table-title {
   background-color: rgb(57, 65, 185);
 }
+.ant-table table {
+  font-size: 18px;
+  font-weight: bold;
+}
+.ant-table-tbody > tr > td, .ant-table-thead > tr > th
+{
+    padding:4px;    
+}
+tr:nth-child(odd){ 
+    background: rgba(207,213,235,255);
+}
+tr:nth-child(even){
+  background: rgba(233,236,245,255);
+}
+thead[class*="ant-table-thead"] th{
+    background-color: rgb(35, 125, 199) !important;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
