@@ -9,6 +9,7 @@ import Tablaestatus from "../componentes/tablaestatus";
 import Tablaregion from "../componentes/tablaregion";
 import Tablasucxregion from "../componentes/tablasucurxregion";
 import Tablausuxregion from "../componentes/tablausuxregion";
+import Tablamenus from "../componentes/menus";
 
 const Inicio = () => {
   return (
@@ -26,7 +27,7 @@ const Inicio = () => {
       <br></br>
       <br></br>
       <br></br>
-      <Tablasucxregion/>
+      <Tablamenus/>
     </>
   );
 };
