@@ -613,6 +613,9 @@ const Tablamenus = () => {
               },
             });
           }, 1000);
+          window.setTimeout(function () {
+            window.location.reload();
+          }, 4000);
         }).catch(errorInfo => {
           console.log(errorInfo);
           message.loading({
