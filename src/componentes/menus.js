@@ -679,14 +679,6 @@ const Tablamenus = () => {
               <br></br>
                 </>
             }
-                            <Row>
-                    <Col offset={3} lg={20}>
-                        <LeftCircleOutlined style={{ fontSize: "30px", color:"#3941b9" }}
-                        onClick={()=>{
-                            console.log(datos)
-                        }}/>
-                    </Col>
-                </Row>
             <Row>
                 <Col offset={2} lg={20}>
                     {
