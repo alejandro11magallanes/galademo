@@ -200,7 +200,8 @@ function Subnivel(props) {
             render: (record) => {
                 return <>
                     <div>
-                        <Checkbox onChange={()=>{
+                        <Checkbox checked={record} onChange={()=>{
+                            console.log(record)
                         }} style={{
                             marginLeft:20
                         }}/>

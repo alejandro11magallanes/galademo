@@ -202,6 +202,25 @@ function Tablamenus() {
             visible: true,
         },
         {
+            orden: 4,
+            title: <span className="dragHandler">Visible</span>,
+            dataIndex: "visible",
+            key: 'visible',
+            width: '5%',
+            render: (record) => {
+                return <>
+                    <div>
+                        <Checkbox checked={record} onChange={()=>{
+                            
+                        }} style={{
+                            marginLeft:20
+                        }}/>
+                    </div>
+                </>
+            },
+            visible: true,
+        },
+        {
             orden: 7,
             title: <span className="dragHandler">Acción</span>,
             key: 'ASU',
