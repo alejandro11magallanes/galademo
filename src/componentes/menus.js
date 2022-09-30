@@ -210,8 +210,14 @@ function Tablamenus() {
             render: (record) => {
                 return <>
                     <div>
-                        <Checkbox checked={record} onChange={()=>{
-                            
+                    <Checkbox defaultChecked={true} onChange={()=>{
+                            if(record == false){
+                                record = true
+                            }
+                            else if(record == true){
+                                record = false
+                            }
+                            console.log(record)
                         }} style={{
                             marginLeft:20
                         }}/>
